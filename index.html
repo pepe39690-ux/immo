@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Upload Immo</title>
+</head>
+<body>
+
+<h2>Upload une photo</h2>
+<input type="file" id="file">
+<button onclick="send()">Envoyer</button>
+
+<h3>Avant</h3>
+<img id="before" width="300">
+
+<h3>Après</h3>
+<img id="after" width="300">
+
+<script>
+async function send() {
+  const file = document.getElementById("file").files[0];
+  if (!file) {
+    alert("Choisis une photo !");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("photo", file);
+
+  try {
+    // 🔹 CHANGE ICI ton URL Railway
+    const RAILWAY_URL = "https://TON-URL-RAILWAY/upload";
+
+    const response = await fetch(RAILWAY_URL, {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (!data.success) {
+      alert("Erreur serveur : " + data.message);
+      return;
+    }
+
+    document.getElementById("before").src =
+      RAILWAY_URL.replace("/upload","/uploads/") + data.before;
+
+    document.getElementById("after").src =
+      RAILWAY_URL.replace("/upload","/uploads/") + data.after;
+
+  } catch (err) {
+    alert("Erreur lors de l'envoi : " + err.message);
+  }
+}
+</script>
+
+</body>
+</html>
